@@ -1,15 +1,68 @@
+import 'dart:convert';
 import 'package:api_crud/screens/add_new_product_screen.dart';
+import 'package:api_crud/screens/product.dart';
 import 'package:api_crud/widgets/product_item.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
-class ProductListScreen extends StatelessWidget {
+class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
+
+  @override
+  State<ProductListScreen> createState() => _ProductListScreenState();
+}
+
+class _ProductListScreenState extends State<ProductListScreen> {
+  List<Product> productList = [];
+  bool inProgress = false;
+  @override
+  void initState() {
+    getProductList();
+    super.initState();
+  }
+
+  void getProductList() async {
+    inProgress = true;
+    setState(() {});
+    Response response = await get(
+      Uri.parse("https://crud.teamrabbil.com/api/v1/ReadProduct"),
+    );
+    print(response.statusCode);
+    print(response.body);
+    if (response.statusCode == 200) {
+      productList.clear();
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      if (responseData['status'] == 'success') {
+        for (Map<String, dynamic> productJson in responseData['data']) {
+          productList.add(Product(
+            productJson['_id'],
+            productJson['ProductName'],
+            productJson['ProductCode'],
+            productJson['Img'],
+            productJson['UnitPrice'],
+            productJson['Qty'],
+            productJson['TotalPrice'],
+          ));
+        }
+      }
+    } else {
+      print('Error: ${response.statusCode}');
+      print('Response: ${response.body}');
+    }
+    inProgress = false;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Product List"),
+          actions: [
+            IconButton(onPressed: (){
+              getProductList();
+            }, icon: Icon(Icons.refresh)),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -21,12 +74,16 @@ class ProductListScreen extends StatelessWidget {
           },
           child: const Icon(Icons.add),
         ),
-        body: ListView.separated(
-          itemCount: 10,
-          itemBuilder: (context, index) {
-            return const ProductItem();
-          },
-          separatorBuilder: (context, index) =>const Divider(),
-        ));
+        body: inProgress
+            ? const Center(child: CircularProgressIndicator(),)
+            : ListView.separated(
+                itemCount: productList.length,
+                itemBuilder: (context, index) {
+                  return ProductItem(
+                    product: productList[index],
+                  );
+                },
+                separatorBuilder: (_, __) => const Divider(),
+              ));
   }
 }

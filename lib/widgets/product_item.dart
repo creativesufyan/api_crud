@@ -1,8 +1,12 @@
 import 'package:api_crud/screens/add_new_product_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/product.dart';
+
 class ProductItem extends StatelessWidget {
-  const ProductItem({super.key});
+  const ProductItem({super.key, required this.product});
+
+  final Product product;
 
   @override
   Widget build(BuildContext context) {
@@ -15,24 +19,18 @@ class ProductItem extends StatelessWidget {
             });
       },
       leading: Image.network(
-        "https://www.vibrantbd.com/cdn/shop/files/2510113_5_300x.jpg?v=1697026185",
+        product.image,
         width: 80,
       ),
-      title: const Text("Product Name"),
-      subtitle: const Column(
+      title: Text(product.productName),
+      subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text("Product Code"),
-              SizedBox(width: 24,),
-              Text("Product Price"),
-            ],
-          ),
-          Text("Product Description")
+          Text(product.productCode),
+          Text("TotalPrice: ${product.totalPrice}"),
         ],
       ),
-      trailing: const Text("\$120"),
+      trailing: Text('\$${product.unitPrice}'),
     );
   }
 
