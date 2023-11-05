@@ -18,7 +18,7 @@ class ProductItem extends StatelessWidget {
               return ProductActionDialog(context);
             });
       },
-      leading: Image.network(
+      leading:  Image.network(
         product.image,
         width: 80,
       ),
@@ -55,8 +55,8 @@ class ProductItem extends StatelessWidget {
             height: 0,
           ),
           ListTile(
-            leading: Icon(Icons.delete_outline),
-            title: Text("Delete"),
+            leading: const Icon(Icons.delete_outline),
+            title: const Text("Delete"),
             onTap: () {
               Navigator.pop(context);
             },

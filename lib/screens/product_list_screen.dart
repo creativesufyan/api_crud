@@ -27,27 +27,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
     Response response = await get(
       Uri.parse("https://crud.teamrabbil.com/api/v1/ReadProduct"),
     );
-    print(response.statusCode);
-    print(response.body);
     if (response.statusCode == 200) {
       productList.clear();
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       if (responseData['status'] == 'success') {
         for (Map<String, dynamic> productJson in responseData['data']) {
           productList.add(Product(
-            productJson['_id'],
-            productJson['ProductName'],
-            productJson['ProductCode'],
-            productJson['Img'],
-            productJson['UnitPrice'],
-            productJson['Qty'],
-            productJson['TotalPrice'],
+            productJson['_id'] ?? '',
+            productJson['ProductName'] ?? '',
+            productJson['ProductCode'] ?? '',
+            productJson['Img'] ?? '',
+            productJson['UnitPrice'] ?? '',
+            productJson['Qty'] ?? '',
+            productJson['TotalPrice'] ?? '',
           ));
         }
       }
     } else {
-      print('Error: ${response.statusCode}');
-      print('Response: ${response.body}');
     }
     inProgress = false;
     setState(() {});
@@ -61,7 +57,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           actions: [
             IconButton(onPressed: (){
               getProductList();
-            }, icon: Icon(Icons.refresh)),
+            }, icon: const Icon(Icons.refresh)),
           ],
         ),
         floatingActionButton: FloatingActionButton(
